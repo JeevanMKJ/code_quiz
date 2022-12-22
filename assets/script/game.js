@@ -3,7 +3,13 @@ const choices = Array.from(document.querySelectorAll(".choice-text"));
 const progressText = document.querySelector("#progressText");
 const scoreText = document.querySelector("#score");
 const progressBarFull = document.querySelector("#progressBarFull");
+var timerElement = document.querySelector(".timer-count");
 
+var timer;
+var timerCount;
+var winCounter = 0;
+var loseCounter = 0;
+var isWin = false;
 let currentQuestion = {};
 let acceptingAnswers = true;
 let score = 0;
@@ -41,10 +47,13 @@ const SCORE_POINTS = 100;
 const MAX_QUESTIONS = 4;
 
 startGame = () => {
+  isWin = false;
+  timerCount = 45;
   questionCounter = 0;
   score = 0;
   availableQuestions = [...questions];
   getNewQuestion();
+  startTimer();
 };
 
 getNewQuestion = () => {
@@ -100,5 +109,28 @@ incrementScore = (num) => {
   score += num;
   scoreText.innerText = score;
 };
+
+// The setTimer function starts and stops the timer and triggers winGame() and loseGame()
+function startTimer() {
+  // Sets timer
+  timer = setInterval(function () {
+    timerCount--;
+    timerElement.textContent = timerCount;
+    if (timerCount >= 0) {
+      // Tests if win condition is met
+      if (isWin && timerCount > 0) {
+        // Clears interval and stops timer
+        clearInterval(timer);
+        winGame();
+      }
+    }
+    // Tests if time has run out
+    if (timerCount === 0) {
+      // Clears interval
+      clearInterval(timer);
+      loseGame();
+    }
+  }, 1000);
+}
 
 startGame();
